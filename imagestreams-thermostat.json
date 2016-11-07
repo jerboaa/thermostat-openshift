@@ -1,0 +1,103 @@
+{
+    "kind": "ImageStreamList",
+    "apiVersion": "v1",
+    "metadata": {
+        "name": "thermostat-image-streams",
+        "annotations": {
+            "description": "ImageStream definitions for Thermostat"
+        }
+    },
+    "items": [
+        {   
+            "kind": "ImageStream",
+            "apiVersion": "v1",
+            "metadata": {
+                "name": "thermostat-storage",
+                "annotations": {
+                    "description": "ImageStream definitions for Thermostat storage"
+                }
+            },
+            "spec": {   
+                "tags": [
+                    {   
+                        "name": "1.6",
+                        "annotations": {
+                            "description": "Provides Thermostat 1.6 storage",
+                            "iconClass": "icon-thermostat",
+                            "tags": "thermostat, openjdk, monitoring, storage",
+                            "version": "1.6"
+                        },
+                        "from": {
+                            "kind": "DockerImage",
+                            "name": "registry.access.redhat.com/rhscl-beta/thermostat-16-storage-rhel7:latest"
+                        }
+                    },
+                    {   
+                        "name": "latest",
+                        "annotations": {
+                            "description": "Provides Thermostat storage",
+                            "iconClass": "icon-thermostat",
+                            "tags": "thermostat, openjdk, monitoring, agent"
+                        },
+                        "from": {
+                            "kind": "ImageStreamTag",
+                            "name": "1.6"
+                        }
+                    }
+                ]
+            }
+        },
+        {   
+            "kind": "ImageStream",
+            "apiVersion": "v1",
+            "metadata": {
+                "name": "thermostat-agent",
+                "annotations": {
+                    "description": "ImageStream definitions for Thermostat agent"
+                }
+            },
+            "spec": {   
+                "tags": [
+                    {   
+                        "name": "1.6",
+                        "annotations": {
+                            "description": "Provides a Thermostat 1.6 agent",
+                            "iconClass": "icon-thermostat",
+                            "tags": "thermostat, openjdk, monitoring, agent",
+                            "version": "1.6"
+                        },
+                        "from": {
+                            "kind": "DockerImage",
+                            "name": "registry.access.redhat.com/rhscl-beta/thermostat-16-agent-rhel7:latest"
+                        }
+                    },
+                    {   
+                        "name": "1.4",
+                        "annotations": {
+                            "description": "Provides a Thermostat 1.4 agent",
+                            "iconClass": "icon-thermostat",
+                            "tags": "thermostat, openjdk, monitoring, agent",
+                            "version": "1.4"
+                        },
+                        "from": {
+                            "kind": "DockerImage",
+                            "name": "centos/thermostat-1-agent-centos7:latest"
+                        }
+                    },
+                    {   
+                        "name": "latest",
+                        "annotations": {
+                            "description": "Provides a Thermostat agent",
+                            "iconClass": "icon-thermostat",
+                            "tags": "thermostat, openjdk, monitoring, agent"
+                        },
+                        "from": {
+                            "kind": "ImageStreamTag",
+                            "name": "1.6"
+                        }
+                    }
+                ]
+            }
+        }
+    ]
+}
