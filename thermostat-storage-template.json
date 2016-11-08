@@ -199,9 +199,8 @@
                                 "image": " ",
                                 "readinessProbe": {
                                     "timeoutSeconds": 3,
-                                    "initialDelaySeconds": 3,
-                                    "httpGet": {
-                                        "path": "/",
+                                    "initialDelaySeconds": 30,
+                                    "tcpSocket": {
                                         "port": 8080
                                     }
                                 },
@@ -209,8 +208,7 @@
                                     "timeoutSeconds": 3,
                                     "initialDelaySeconds": 120,
                                     "failureThreshold" : 30,
-                                    "httpGet": {
-                                        "path": "/",
+                                    "tcpSocket": {
                                         "port": 8080
                                     }
                                 },
