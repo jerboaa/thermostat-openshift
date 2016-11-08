@@ -313,7 +313,7 @@
                 "name": "${TH_STORAGE_SERVICE_NAME}",
                 "creationTimestamp": null,
                 "annotations": {
-                    "service.alpha.openshift.io/dependencies": "[{\"name\":\"mongodb\",\"namespace\":\"\",\"kind\":\"Service\"}]"
+                    "service.alpha.openshift.io/dependencies": "[{\"name\":\"${DATABASE_SERVICE_NAME}\",\"namespace\":\"\",\"kind\":\"Service\"}]"
                 }
             },
             "spec": {
