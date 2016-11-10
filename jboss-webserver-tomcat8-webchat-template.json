@@ -1,0 +1,224 @@
+{
+    "kind": "Template",
+    "apiVersion": "v1",
+    "metadata": {
+        "name": "jboss-webserver-tomcat8-webchat",
+        "creationTimestamp": null,
+        "annotations": {
+          "openshift.io/display-name": "Tomcat 8 Websockets Web Chat",
+          "description": "Tomcat 8 Websockets Web Chat Example",
+          "iconClass": "icon-jboss",
+          "tags": "instant-app,jboss-webserver-tomcat8"
+        }
+    },
+    "objects": [
+        {
+            "kind": "DeploymentConfig",
+            "apiVersion": "v1",
+            "metadata": {
+                "name": "${TOMCAT8_SERVICE_NAME}",
+                "generation": 2,
+                "creationTimestamp": null,
+                "annotations": {
+                    "description": "Defines how to deploy the tomcat 8 webchat service"
+                }
+            },
+            "spec": {
+                "strategy": {
+                    "type": "Recreate"
+                },
+                "triggers": [
+                    {
+                        "type": "ConfigChange"
+                    },
+                    {
+                        "type": "ImageChange",
+                        "imageChangeParams": {
+                            "automatic": true,
+                            "containerNames": [
+                                "${APP_IMAGE_NAME}"
+                            ],
+                            "from": {
+                                "kind": "ImageStreamTag",
+                                "name": "${APP_IMAGE_NAME}:latest"
+                            }
+                        }
+                    }
+                ],
+                "replicas": 1,
+                "selector": {
+                    "name": "${APP_IMAGE_NAME}"
+                },
+                "template": {
+                    "metadata": {
+                        "creationTimestamp": null,
+                        "labels": {
+                            "name": "${APP_IMAGE_NAME}"
+                        }
+                    },
+                    "spec": {
+                        "containers": [
+                            {
+                                "name": "${APP_IMAGE_NAME}",
+                                "image": " ",
+                                "ports": [
+                                    {
+                                        "containerPort": 8080,
+                                        "protocol": "TCP"
+                                    },
+                                    {
+                                        "containerPort": 8443,
+                                        "protocol": "TCP"
+                                    },
+                                    {
+                                        "containerPort": 8778,
+                                        "protocol": "TCP"
+                                    }
+                                ],
+                                "terminationMessagePath": "/dev/termination-log",
+                                "imagePullPolicy": "Always"
+                            }
+                        ],
+                        "restartPolicy": "Always",
+                        "terminationGracePeriodSeconds": 30,
+                        "dnsPolicy": "ClusterFirst",
+                        "securityContext": {}
+                    }
+                }
+            }
+        },
+        {
+            "kind": "ImageStream",
+            "apiVersion": "v1",
+            "metadata": {
+                "name": "${APP_IMAGE_NAME}",
+                "annotations": {
+                    "description": "Keeps track of changes in the application image"
+                }
+            }
+        },
+        {
+            "kind": "BuildConfig",
+            "apiVersion": "v1",
+            "metadata": {
+                "name": "${APP_IMAGE_NAME}",
+                "creationTimestamp": null,
+                "annotations": {
+                    "description": "Defines how to build the application"
+                },
+                "labels": {
+                    "app": "${APP_IMAGE_NAME}"
+                }
+            },
+            "spec": {
+                "source": {
+                    "type": "Git",
+                    "git": {
+                        "uri": "https://github.com/jboss-openshift/openshift-quickstarts.git"
+                    },
+                    "contextDir": "tomcat-websocket-chat"
+                },
+                "strategy": {
+                    "type": "Source",
+                    "sourceStrategy": {
+                        "from": {
+                            "kind": "ImageStreamTag",
+                            "name": "${TOMCAT8_IMAGE_STREAM_TAG}"
+                        }
+                    }
+                },
+                "output": {
+                    "to": {
+                        "kind": "ImageStreamTag",
+                        "name": "${APP_IMAGE_NAME}:latest"
+                    }
+                },
+                "triggers": [
+                    {
+                        "type": "GitHub",
+                        "github": {
+                            "secret": "${GITHUB_WEBHOOK_SECRET}"
+                        }
+                    },
+                    {
+                        "type": "ConfigChange"
+                    },
+                    {
+                        "type": "ImageChange"
+                    }
+                ]
+            }
+        },
+        {
+            "kind": "Route",
+            "apiVersion": "v1",
+            "metadata": {
+                "name": "${TOMCAT8_SERVICE_NAME}",
+                "creationTimestamp": null
+            },
+            "spec": {
+                "path": "/websocket-chat/",
+                "to": {
+                    "kind": "Service",
+                    "name": "${APP_IMAGE_NAME}"
+                }
+            }
+        },
+        {
+            "kind": "Service",
+            "apiVersion": "v1",
+            "metadata": {
+                "name": "${APP_IMAGE_NAME}",
+                "creationTimestamp": null,
+                "annotations": {
+                    "description": "Exposes the Tomcat 8 web chat server."
+                }
+            },
+            "spec": {
+                "ports": [
+                    {
+                        "protocol": "TCP",
+                        "port": 80,
+                        "targetPort": 8080
+                    }
+                ],
+                "selector": {
+                    "name": "${APP_IMAGE_NAME}"
+                },
+                "type": "ClusterIP",
+                "sessionAffinity": "None"
+            }
+        }
+    ],
+    "parameters": [
+        {
+            "name": "TOMCAT8_SERVICE_NAME",
+            "required": true,
+            "displayName": "Tomcat 8 service name",
+            "description": "The name of the OpenShift service for the Tomcat 8 Websockets Web chat app.",
+            "value": "tomcat-webchat-ex"
+        },
+        {
+            "name": "TOMCAT8_IMAGE_STREAM_TAG",
+            "displayName": "Tomcat 8 container ImageStreamTag",
+            "description": "Name of the ImageStreamTag with the tomcat 8 container image.",
+            "value": "jboss-webserver:latest"
+        },
+        {
+            "name": "APP_IMAGE_NAME",
+            "displayName": "Application image name",
+            "description": "Name of the app image which is based on the tomcat 8 image.",
+            "value": "webchat-tomcat8-app"
+        },
+        {
+            "name": "GITHUB_WEBHOOK_SECRET",
+            "displayName": "Github Web Hook Secret",
+            "description": "A secret string used to configure the GitHub webhook.",
+            "generate": "expression",
+            "from": "[a-zA-Z0-9]{40}"
+        }
+    ],
+    "labels": {
+        "template": "jboss-webserver-tomcat8-webchat-template"
+    }
+}
