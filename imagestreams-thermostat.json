@@ -29,7 +29,7 @@
                         },
                         "from": {
                             "kind": "DockerImage",
-                            "name": "registry.access.redhat.com/rhscl-beta/thermostat-16-storage-rhel7:latest"
+                            "name": "registry.access.redhat.com/rhscl/thermostat-16-storage-rhel7"
                         }
                     },
                     {   
@@ -37,7 +37,7 @@
                         "annotations": {
                             "description": "Provides Thermostat storage",
                             "iconClass": "icon-thermostat",
-                            "tags": "thermostat, openjdk, monitoring, agent"
+                            "tags": "thermostat, openjdk, monitoring, storage"
                         },
                         "from": {
                             "kind": "ImageStreamTag",
@@ -68,7 +68,7 @@
                         },
                         "from": {
                             "kind": "DockerImage",
-                            "name": "registry.access.redhat.com/rhscl-beta/thermostat-16-agent-rhel7:latest"
+                            "name": "registry.access.redhat.com/rhscl/thermostat-16-agent-rhel7"
                         }
                     },
                     {   
@@ -81,7 +81,7 @@
                         },
                         "from": {
                             "kind": "DockerImage",
-                            "name": "centos/thermostat-1-agent-centos7:latest"
+                            "name": "centos/thermostat-1-agent-centos7"
                         }
                     },
                     {   
